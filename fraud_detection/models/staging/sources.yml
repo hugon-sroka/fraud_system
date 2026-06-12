@@ -1,0 +1,42 @@
+version: 2
+
+sources:
+  - name: fraud_detection
+    database: fraud-sytem
+    schema: fraud_detection
+    description: "Raw transaction data loaded from CSV generator"
+    tables:
+      - name: transactions
+        description: "Raw transactions - landing zone, no transformations"
+        loaded_at_field: uploaded_at
+        freshness:
+          warn_after: {count: 24, period: hour}
+        columns:
+          - name: transaction_id
+            description: "Unique transaction identifier"
+            tests:
+              - not_null
+          - name: account_id
+            description: "Customer account identifier"
+            tests:
+              - not_null
+          - name: transaction_ts
+            description: "Transaction timestamp"
+            tests:
+              - not_null
+          - name: payment_type
+            description: "Payment method: S/V/D/K/B"
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['S', 'V', 'D', 'K', 'B']
+          - name: status
+            description: "Transaction status"
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['accepted', 'rejected']
+          - name: original_amount
+            description: "Transaction amount in original currency"
+            tests:
+              - not_null

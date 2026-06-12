@@ -59,3 +59,19 @@ Happy modeling!
 [0m13:26:05.580999 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbd00836840>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbcd5d1c920>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbcd4f34c80>]}
 [0m13:26:05.581353 [debug] [MainThread]: Flushing usage events
 [0m13:26:06.245992 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m14:27:48.248975 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x79641d201490>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x79641d056a20>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x79641c5c6c30>]}
+
+
+============================== 14:27:48.255540 | 04dd4da9-4940-4f52-8292-288b1fcdd115 ==============================
+[0m14:27:48.255540 [info ] [MainThread]: Running with dbt=1.11.11
+[0m14:27:48.256057 [debug] [MainThread]: running dbt with arguments {'send_anonymous_usage_stats': 'True', 'printer_width': '80', 'no_print': 'None', 'version_check': 'True', 'partial_parse': 'True', 'use_colors': 'True', 'log_format': 'default', 'write_json': 'True', 'target_path': 'None', 'warn_error': 'None', 'empty': 'False', 'indirect_selection': 'eager', 'introspect': 'True', 'invocation_command': 'dbt run --select stg_transactions', 'cache_selected_only': 'False', 'debug': 'False', 'static_parser': 'True', 'log_path': 'logs', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'log_cache_events': 'False', 'fail_fast': 'False', 'use_experimental_parser': 'False', 'profiles_dir': '/home/hugonsroka/.dbt', 'quiet': 'False'}
+[0m14:27:48.256391 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /home/hugonsroka/fraud_system/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m14:27:48.257485 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": false, "command_wall_clock_time": 0.069947705, "process_in_blocks": "77256", "process_kernel_time": 0.182706, "process_mem_max_rss": "102872", "process_out_blocks": "8", "process_user_time": 1.253365}
+[0m14:27:48.257827 [debug] [MainThread]: Command `dbt run` failed at 14:27:48.257750 after 0.07 seconds
+[0m14:27:48.258064 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x79641c4eb770>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x79641ce4fa70>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x79641cee0320>]}
+[0m14:27:48.258334 [debug] [MainThread]: Flushing usage events
+[0m14:27:48.902107 [debug] [MainThread]: An error was encountered while trying to flush usage events
