@@ -1,0 +1,61 @@
+[0m13:19:55.629624 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d8d9b2c7e90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d8d9aca7170>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d8d9b5f7d40>]}
+
+
+============================== 13:19:55.632580 | 729d6fee-f8c5-4a4b-9089-2c71825b671c ==============================
+[0m13:19:55.632580 [info ] [MainThread]: Running with dbt=1.11.11
+[0m13:19:55.633286 [debug] [MainThread]: running dbt with arguments {'warn_error': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'use_colors': 'True', 'write_json': 'True', 'quiet': 'False', 'version_check': 'True', 'profiles_dir': '/home/hugonsroka/.dbt', 'no_print': 'None', 'cache_selected_only': 'False', 'log_format': 'default', 'empty': 'None', 'send_anonymous_usage_stats': 'True', 'partial_parse': 'True', 'use_experimental_parser': 'False', 'debug': 'False', 'log_path': 'logs', 'indirect_selection': 'eager', 'target_path': 'None', 'fail_fast': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'introspect': 'True', 'invocation_command': 'dbt init dbt', 'printer_width': '80'}
+[0m13:19:55.642309 [info ] [MainThread]: Creating dbt configuration folder at /home/hugonsroka/.dbt
+[0m13:20:35.906738 [debug] [MainThread]: Starter project path: /home/hugonsroka/fraud_system/newvenv/lib/python3.12/site-packages/dbt/include/starter_project
+[0m13:20:35.909034 [info ] [MainThread]: 
+Your new dbt project "fraud_sytem" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m13:20:35.909455 [info ] [MainThread]: Setting up your profile.
+[0m13:23:02.831942 [info ] [MainThread]: Profile fraud_sytem written to /home/hugonsroka/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m13:23:02.832696 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 201.00821, "process_in_blocks": "0", "process_kernel_time": 0.282195, "process_mem_max_rss": "212028", "process_out_blocks": "88", "process_user_time": 2.897203}
+[0m13:23:02.833290 [debug] [MainThread]: Command `dbt init` succeeded at 13:23:02.833199 after 201.01 seconds
+[0m13:23:02.833634 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d8d6b76c5c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d8d70eadeb0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d8d701e1880>]}
+[0m13:23:02.834077 [debug] [MainThread]: Flushing usage events
+[0m13:23:03.469025 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m13:24:58.022159 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbd02caf020>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbd00bb5010>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbd00bb4cb0>]}
+
+
+============================== 13:24:58.025018 | ce5249e0-8b82-4e9f-a9a7-c90ebe083764 ==============================
+[0m13:24:58.025018 [info ] [MainThread]: Running with dbt=1.11.11
+[0m13:24:58.025478 [debug] [MainThread]: running dbt with arguments {'introspect': 'True', 'empty': 'None', 'use_colors': 'True', 'write_json': 'True', 'invocation_command': 'dbt init dbt', 'fail_fast': 'False', 'cache_selected_only': 'False', 'debug': 'False', 'quiet': 'False', 'use_experimental_parser': 'False', 'no_print': 'None', 'log_format': 'default', 'static_parser': 'True', 'printer_width': '80', 'partial_parse': 'True', 'log_cache_events': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'indirect_selection': 'eager', 'version_check': 'True', 'send_anonymous_usage_stats': 'True', 'log_path': 'logs', 'target_path': 'None', 'profiles_dir': '/home/hugonsroka/.dbt', 'warn_error': 'None'}
+[0m13:25:44.281855 [debug] [MainThread]: Starter project path: /home/hugonsroka/fraud_system/newvenv/lib/python3.12/site-packages/dbt/include/starter_project
+[0m13:25:44.284280 [info ] [MainThread]: 
+Your new dbt project "fraud_detection" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m13:25:44.284621 [info ] [MainThread]: Setting up your profile.
+[0m13:26:05.578959 [info ] [MainThread]: Profile fraud_detection written to /home/hugonsroka/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m13:26:05.579921 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 75.0536, "process_in_blocks": "0", "process_kernel_time": 0.246309, "process_mem_max_rss": "212272", "process_out_blocks": "104", "process_user_time": 2.690748}
+[0m13:26:05.580651 [debug] [MainThread]: Command `dbt init` succeeded at 13:26:05.580523 after 75.05 seconds
+[0m13:26:05.580999 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbd00836840>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbcd5d1c920>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbcd4f34c80>]}
+[0m13:26:05.581353 [debug] [MainThread]: Flushing usage events
+[0m13:26:06.245992 [debug] [MainThread]: An error was encountered while trying to flush usage events
