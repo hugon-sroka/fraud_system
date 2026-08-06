@@ -7,3 +7,6 @@ __pycache__/
 data/*.csv
 *.csv
 data_generation/*.csv
+logs/
+*.json
+!package.json
