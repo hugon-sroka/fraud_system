@@ -1,76 +1,73 @@
-from __future__ import annotations
+"""
+Simple Rule Engine: Evaluates a transaction alert against 4 clear rules.
+Returns a FraudDecision object containing the verdict and triggered rules.
+"""
 
-from typing import List, Tuple
-from schemas.alert import FraudAlert, DecisionType
-import config
-
-
-class RuleEvaluationResult:
-    def __init__(
-        self,
-        suggested_decision: DecisionType,
-        confidence: float,
-        triggered_rules: List[str],
-        reasoning: str,
-    ):
-        self.suggested_decision = suggested_decision
-        self.confidence = confidence
-        self.triggered_rules = triggered_rules
-        self.reasoning = reasoning
+from schemas.alert import FraudAlert, FraudDecision
 
 
-def evaluate_rules(alert: FraudAlert) -> RuleEvaluationResult:
-    triggered_rules: List[str] = []
-    
-    # 1. Structuring Detection Rule (AML evasion)
+def evaluate_fraud(alert: FraudAlert) -> FraudDecision:
+    """
+    Evaluates risk signals on a transaction alert and decides an action:
+      - BLOCK_CARD    : Immediate block for dangerous patterns (Structuring / Card Testing).
+      - CHALLENGE_2FA : Step-up verification for suspicious velocity or spend deviation.
+      - ALLOW         : Normal transaction.
+    """
+    triggered_rules = []
+
+    # Rule 1: Structuring (AML Evasion - splitting payments under $10k threshold)
     if alert.signal_structuring:
         triggered_rules.append("RULE_STRUCTURING_BURST")
-        
-    # 2. Card Testing Attack Rule (Micro transactions in rapid burst)
+
+    # Rule 2: Card Testing (Bot testing stolen card with micro payments <= $5)
     if alert.signal_card_testing:
         triggered_rules.append("RULE_CARD_TESTING_BURST")
-        
-    # 3. High Velocity Rule
-    if alert.signal_velocity_10m_spike or alert.velocity_10m_count >= config.VELOCITY_THRESHOLD:
-        triggered_rules.append("RULE_VELOCITY_10M_SPIKE")
-        
-    # 4. Extreme Z-Score Rule
-    if alert.signal_high_zscore or alert.z_score >= config.ZSCORE_THRESHOLD:
-        triggered_rules.append("RULE_EXTREME_SPEND_DEVIATION")
-        
-    # 5. New Merchant High-Value Rule
-    if alert.signal_new_merchant_large_amount:
-        triggered_rules.append("RULE_UNFAMILIAR_MERCHANT_HIGH_VALUE")
-        
-    # Decision Matrix based on Rule Combinations
+
+    # Rule 3: High Velocity (5+ transactions in 10 minutes)
+    if alert.signal_velocity_10m_spike or alert.velocity_10m_count >= 5:
+        triggered_rules.append("RULE_HIGH_VELOCITY_10M")
+
+    # Rule 4: High Z-Score (Transaction amount is 3+ standard deviations above account avg)
+    if alert.signal_high_zscore or alert.z_score >= 3.0:
+        triggered_rules.append("RULE_HIGH_SPEND_DEVIATION")
+
+    # --- DECISION LOGIC ---
+
+    # Critical patterns -> Immediate Block
     if "RULE_STRUCTURING_BURST" in triggered_rules or "RULE_CARD_TESTING_BURST" in triggered_rules:
-        return RuleEvaluationResult(
-            suggested_decision=DecisionType.BLOCK_CARD,
-            confidence=0.95,
-            triggered_rules=triggered_rules,
-            reasoning="Critical fraud patterns detected (Structuring or Card Testing Attack). Immediate block recommended.",
+        return FraudDecision(
+            transaction_id=alert.transaction_id,
+            account_id=alert.account_id,
+            decision="BLOCK_CARD",
+            applied_rules=triggered_rules,
+            reason="Dangerous fraud pattern detected (Structuring or Card Testing). Card blocked.",
         )
-        
+
+    # Multiple suspicious rules -> Block
     if len(triggered_rules) >= 2:
-        return RuleEvaluationResult(
-            suggested_decision=DecisionType.BLOCK_CARD,
-            confidence=0.88,
-            triggered_rules=triggered_rules,
-            reasoning=f"Multiple risk indicators triggered ({', '.join(triggered_rules)}). Card block recommended.",
+        return FraudDecision(
+            transaction_id=alert.transaction_id,
+            account_id=alert.account_id,
+            decision="BLOCK_CARD",
+            applied_rules=triggered_rules,
+            reason=f"Multiple risk rules triggered: {', '.join(triggered_rules)}. Card blocked.",
         )
-        
+
+    # Single suspicious rule -> 2FA Challenge
     if len(triggered_rules) == 1:
-        return RuleEvaluationResult(
-            suggested_decision=DecisionType.CHALLENGE_2FA,
-            confidence=0.75,
-            triggered_rules=triggered_rules,
-            reasoning=f"Single elevated risk indicator ({triggered_rules[0]}). Step-up 2FA authentication recommended.",
+        return FraudDecision(
+            transaction_id=alert.transaction_id,
+            account_id=alert.account_id,
+            decision="CHALLENGE_2FA",
+            applied_rules=triggered_rules,
+            reason=f"Elevated risk indicator ({triggered_rules[0]}). Sent 2FA prompt.",
         )
-        
-    # Default fallback for low-risk alerts
-    return RuleEvaluationResult(
-        suggested_decision=DecisionType.ALLOW,
-        confidence=0.90,
-        triggered_rules=[],
-        reasoning="No high-risk fraud rules triggered. Safe to authorize.",
+
+    # Clean transaction -> Allow
+    return FraudDecision(
+        transaction_id=alert.transaction_id,
+        account_id=alert.account_id,
+        decision="ALLOW",
+        applied_rules=[],
+        reason="No risk rules triggered. Transaction approved.",
     )

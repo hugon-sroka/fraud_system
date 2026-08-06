@@ -1,96 +1,87 @@
 #!/usr/bin/env python3
 """
 =============================================================
-FRAUD DETECTION & AGENTIC RESOLUTION ORCHESTRATOR
+FRAUD DETECTION & EVALUATION RUNNER
 =============================================================
-Uruchomienie:
+How to run:
     python main.py
-    python main.py --limit 10
 =============================================================
 """
 
-import argparse
 import json
-from datetime import datetime
+from dataclasses import asdict
 from pathlib import Path
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from agent.analyst import FraudAnalystAgent
-from services.alert_service import load_mock_alerts
+from rules.engine import evaluate_fraud
+from services.alert_service import get_pending_alerts
 
 console = Console()
 
 
-def run_agentic_pipeline(alert_limit: int = 5):
+def main():
+    # Banner
     console.print(
         Panel.fit(
-            "[bold cyan]🛡️ Sentinel Fraud Detection & Agentic Resolution Engine[/bold cyan]\n"
-            "[dim]dbt Transformation Pipeline + Autonomous AI Fraud Analyst[/dim]",
+            "[bold cyan]🛡️ Sentinel Fraud Detection System[/bold cyan]\n"
+            "[dim]dbt Pipeline + Rule Evaluation Engine[/dim]",
             border_style="cyan",
         )
     )
 
-    console.print("[bold yellow]Step 1: Fetching pending high-risk fraud alerts...[/bold yellow]")
-    alerts = load_mock_alerts(limit=alert_limit)
-    console.print(f"Loaded [bold green]{len(alerts)}[/bold green] alerts from alert queue.\n")
+    # Step 1: Load alerts
+    console.print("[bold yellow]Step 1: Loading pending fraud alerts...[/bold yellow]")
+    alerts = get_pending_alerts(limit=5)
+    console.print(f"Loaded [bold green]{len(alerts)}[/bold green] alerts to evaluate.\n")
 
-    agent = FraudAnalystAgent(agent_name="Sentinel-Alpha")
-
-    table = Table(title="🤖 Agentic Fraud Resolution Results", show_header=True, header_style="bold magenta")
+    # Step 2: Build terminal table
+    table = Table(title="Fraud Evaluation Results", show_header=True, header_style="bold magenta")
     table.add_column("Txn ID", style="dim")
     table.add_column("Account", style="cyan")
-    table.add_column("Amount (USD)", justify="right")
-    table.add_column("Risk Score", justify="center")
-    table.add_column("Risk Tier", justify="center")
+    table.add_column("Amount", justify="right")
     table.add_column("Decision", justify="center")
-    table.add_column("Applied Rules")
+    table.add_column("Triggered Rules")
 
-    resolutions = []
+    results_to_save = []
 
+    # Step 3: Evaluate each alert
     for alert in alerts:
-        resolution = agent.investigate(alert)
-        resolutions.append(resolution.model_dump())
+        decision = evaluate_fraud(alert)
+        results_to_save.append(asdict(decision))
 
-        # Styling decisions
-        if resolution.decision.value == "BLOCK_CARD":
-            dec_style = "[bold red]⛔ BLOCK_CARD[/bold red]"
-        elif resolution.decision.value == "CHALLENGE_2FA":
-            dec_style = "[bold yellow]🔑 CHALLENGE_2FA[/bold yellow]"
+        # Format decision color
+        if decision.decision == "BLOCK_CARD":
+            dec_text = "[bold red]⛔ BLOCK_CARD[/bold red]"
+        elif decision.decision == "CHALLENGE_2FA":
+            dec_text = "[bold yellow]🔑 CHALLENGE_2FA[/bold yellow]"
         else:
-            dec_style = "[bold green]✅ ALLOW[/bold green]"
+            dec_text = "[bold green]✅ ALLOW[/bold green]"
+
+        rules_str = ", ".join(decision.applied_rules) if decision.applied_rules else "[dim]None[/dim]"
 
         table.add_row(
             alert.transaction_id,
             alert.account_id,
             f"${alert.amount_usd:,.2f}",
-            f"{alert.risk_score:.0f}",
-            f"[bold]{alert.risk_tier.value}[/bold]",
-            dec_style,
-            ", ".join(resolution.applied_rules) if resolution.applied_rules else "[dim]None[/dim]",
+            dec_text,
+            rules_str,
         )
 
+    # Print table to terminal
     console.print(table)
 
-    # Save audit trail log
+    # Step 4: Save JSON audit log
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
     log_file = log_dir / "agent_resolutions.json"
 
     with open(log_file, "w", encoding="utf-8") as f:
-        json.dump(resolutions, f, indent=2)
+        json.dump(results_to_save, f, indent=2)
 
-    console.print(f"\n[bold green]✅ Audit resolutions successfully saved to {log_file}[/bold green]")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Sentinel Fraud Detection Agent CLI")
-    parser.add_argument("--limit", type=int, default=5, help="Max alerts to process")
-    args = parser.parse_args()
-
-    run_agentic_pipeline(alert_limit=args.limit)
+    console.print(f"\n[bold green]✅ Saved evaluation log to {log_file}[/bold green]")
 
 
 if __name__ == "__main__":
