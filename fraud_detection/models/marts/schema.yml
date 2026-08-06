@@ -39,3 +39,21 @@ models:
         tests:
           - not_null
           - unique
+  - name: rpt_daily_fraud_summary
+    description: "BI Reporting View: Daily transaction volume, flagged alerts count, and risk tier distribution."
+    columns:
+      - name: transaction_date
+        tests:
+          - not_null
+          - unique
+
+  - name: rpt_merchant_risk_leaderboard
+    description: "BI Reporting View: Merchant risk ranking by flagged volume and fraud percentage rate."
+    columns:
+      - name: merchant_id
+        tests:
+          - not_null
+          - unique
+
+  - name: rpt_hourly_velocity_heatmaps
+    description: "BI Reporting View: Transaction velocity and risk score aggregations by day of week and hour of day."
