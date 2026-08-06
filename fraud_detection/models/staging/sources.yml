@@ -8,9 +8,10 @@ sources:
     tables:
       - name: transactions
         description: "Raw transactions - landing zone, no transformations"
-        loaded_at_field: uploaded_at
-        freshness:
-          warn_after: {count: 24, period: hour}
+        config:
+          loaded_at_field: uploaded_at
+          freshness:
+            warn_after: {count: 24, period: hour}
         columns:
           - name: transaction_id
             description: "Unique transaction identifier"
