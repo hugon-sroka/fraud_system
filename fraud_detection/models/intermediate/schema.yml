@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: int_transaction_velocity
+    description: "Calculates rolling 10-minute, 1-hour, and 24-hour transaction counts and amounts per account."
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
+
+  - name: int_account_baselines
+    description: "Historical account average spend and standard deviation for Z-Score computation."
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+
+  - name: int_fraud_signals
+    description: "Combines velocity, baselines, and transaction attributes to evaluate individual fraud signal flags."
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique

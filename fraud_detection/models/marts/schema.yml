@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: fct_transactions
+    description: "Primary transaction fact table with calculated weighted risk score (0-100) and risk tier."
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
+      - name: risk_score
+        tests:
+          - not_null
+      - name: risk_tier
+        tests:
+          - accepted_values:
+              values: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']
+
+  - name: fct_fraud_alerts
+    description: "Filtered queue of high-risk transactions requiring automated agent investigation."
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_accounts
+    description: "Customer account dimension table."
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_merchants
+    description: "Merchant dimension table with volume and fraud rate metrics."
+    columns:
+      - name: merchant_id
+        tests:
+          - not_null
+          - unique
