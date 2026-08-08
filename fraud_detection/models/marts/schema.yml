@@ -59,3 +59,25 @@ models:
 
   - name: rpt_hourly_velocity_heatmaps
     description: "BI Reporting View: Transaction velocity and risk score aggregations by day of week and hour of day."
+  - name: fct_account_velocity_windows
+    description: "Analytical Mart: Daily account activity peaks, rolling 10m/1h velocity windows, and max daily risk scores."
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+
+  - name: fct_fraud_patterns
+    description: "Analytical Mart: Incident volume and financial loss at risk broken down by fraud attack vector."
+    columns:
+      - name: pattern_name
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_risk_cohorts
+    description: "Analytical Mart: Customer risk segmentation cohorts (HIGH_RISK_REPEATER, ELEVATED_RISK, TRUSTED_HIGH_VOLUME, STANDARD_CLEAN)."
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
