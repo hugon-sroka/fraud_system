@@ -81,3 +81,10 @@ models:
         tests:
           - not_null
           - unique
+  - name: rpt_risk_tier_summary
+    description: "BI Pie Chart View: Pre-aggregated risk tier totals (4 rows only) for instant Looker Studio donut charts."
+    columns:
+      - name: risk_tier
+        tests:
+          - not_null
+          - unique
