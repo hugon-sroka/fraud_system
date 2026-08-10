@@ -88,3 +88,18 @@ models:
         tests:
           - not_null
           - unique
+  - name: rpt_transactions_recent
+    description: "Middle-Ground Table: Last 30 days transactions with full row-level detail. Partitioned + clustered for fast Looker Studio queries."
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
+
+  - name: rpt_high_risk_transactions
+    description: "Middle-Ground Table: All HIGH and CRITICAL risk transactions with full detail for investigation drill-down."
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
