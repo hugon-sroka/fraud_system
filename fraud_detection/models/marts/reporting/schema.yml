@@ -1,46 +1,6 @@
 version: 2
 
 models:
-  - name: fct_transactions
-    description: "Primary transaction fact table with calculated weighted risk score (0-100) and risk tier."
-    columns:
-      - name: transaction_id
-        tests:
-          - not_null
-          - unique
-      - name: risk_score
-        tests:
-          - not_null
-      - name: risk_tier
-        tests:
-          - accepted_values:
-              arguments:
-                values: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']
-
-  - name: fct_fraud_alerts
-    description: "Filtered queue of high-risk transactions requiring automated agent investigation."
-    columns:
-      - name: transaction_id
-        tests:
-          - not_null
-          - unique
-
-  - name: dim_accounts
-    description: "Customer account dimension table."
-    columns:
-      - name: account_id
-        tests:
-          - not_null
-          - unique
-
-  - name: dim_merchants
-    description: "Merchant dimension table with volume and fraud rate metrics."
-    columns:
-      - name: merchant_id
-        tests:
-          - not_null
-          - unique
-
   - name: rpt_daily_fraud_summary
     description: "BI Reporting View: Daily transaction volume, flagged alerts count, and risk tier distribution."
     columns:
@@ -59,6 +19,7 @@ models:
 
   - name: rpt_hourly_velocity_heatmaps
     description: "BI Reporting View: Transaction velocity and risk score aggregations by day of week and hour of day."
+
   - name: fct_account_velocity_windows
     description: "Analytical Mart: Daily account activity peaks, rolling 10m/1h velocity windows, and max daily risk scores."
     columns:
@@ -74,13 +35,6 @@ models:
           - not_null
           - unique
 
-  - name: dim_risk_cohorts
-    description: "Analytical Mart: Customer risk segmentation cohorts (HIGH_RISK_REPEATER, ELEVATED_RISK, TRUSTED_HIGH_VOLUME, STANDARD_CLEAN)."
-    columns:
-      - name: account_id
-        tests:
-          - not_null
-          - unique
   - name: rpt_risk_tier_summary
     description: "BI Pie Chart View: Pre-aggregated risk tier totals (4 rows only) for instant Looker Studio donut charts."
     columns:
@@ -88,6 +42,7 @@ models:
         tests:
           - not_null
           - unique
+
   - name: rpt_transactions_recent
     description: "Middle-Ground Table: Last 30 days transactions with full row-level detail. Partitioned + clustered for fast Looker Studio queries."
     columns:
