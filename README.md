@@ -1,6 +1,8 @@
-# 🛡️ End-to-End Agentic Fraud Detection & Data Platform
+# # 🛡️ Fraud Detection Pipeline (dbt + BigQuery + Python)
 
-An enterprise-grade fraud detection platform combining synthetic transaction generation, **dbt** data modeling on **Google BigQuery**, and an **Autonomous Agentic Fraud Resolution Engine**.
+A fraud detection project built on synthetic transaction data: dbt models on Google BigQuery
+compute fraud signals, and a Python rules engine turns them into decisions
+(ALLOW / CHALLENGE_2FA / BLOCK_CARD), orchestrated with Airflow.
 
 ---
 
@@ -18,14 +20,12 @@ An enterprise-grade fraud detection platform combining synthetic transaction gen
                   +---------------------+---------------------+
                   |                                           |
                   v                                           v
-    [ BI Dashboards ]                             [ Agentic Fraud Analyst ]
-  (Looker Studio / PowerBI)                       ├── Rules Engine (Thresholds)
-                                                  ├── LLM Contextual Investigation
-                                                  └── Automated Actions (Block, 2FA, Escalation)
+    [ BI Dashboards ]                             [ Rules Engine (Python) ]
+  (Looker Studio / PowerBI)                       ├── 5 fraud signals from dbt
+                                                  └── Decision: ALLOW / CHALLENGE_2FA / BLOCK_CARD
                                                               |
                                                               v
-                                                [ Orchestrator & Audit Trail ]
-                                                (Airflow DAG / FastAPI / BigQuery Logs)
+                                                [ Airflow DAG + JSON audit log ]
 ```
 
 ---
@@ -41,10 +41,12 @@ An enterprise-grade fraud detection platform combining synthetic transaction gen
    - **Intermediate**: Windowed aggregate metrics (10-min, 1-hr, 24-hr velocity), account baseline spending ($\mu$, $\sigma$), anomaly signal flagging.
    - **Marts**: Star schema (`fct_transactions`, `dim_accounts`, `dim_merchants`) with risk scoring ($0–100$) and high-risk alert queue (`fct_fraud_alerts`).
 
-3. **Autonomous Agentic Resolution Engine** (`agent/`, `rules/`, `services/`):
-   - **Deterministic Rules Engine**: Rapid scoring against configured thresholds (`config.py`).
-   - **Agent Analyst**: Multi-step AI investigation examining customer historical patterns, location continuity, and merchant risk to prevent false positives.
-   - **Action Dispatcher**: Triggers automated block/allow decisions, updates BigQuery resolution logs, and posts webhook alerts.
+3. **Rules Engine** (`rules/`, `agent/`, `services/`):
+   - Evaluates 5 signals from dbt: velocity (10 min), z-score, structuring, card testing, high-value new merchant.
+   - Critical patterns (structuring, card testing) or 2+ signals → BLOCK_CARD; one signal → CHALLENGE_2FA.
+   - Every decision is saved to a JSON audit log with the rules that triggered it.
+
+**Roadmap:** LLM-assisted investigation of borderline alerts, decision log in BigQuery, account takeover rule based on login events.
 
 4. **Pipeline Orchestration** (`dags/` / `main.py`):
    - **Apache Airflow DAG**: Production orchestration managing data load → dbt run → dbt test → agent resolution batch execution.

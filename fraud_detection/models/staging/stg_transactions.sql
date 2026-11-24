@@ -6,10 +6,33 @@
 --          Audit trail musi być kompletny
 -- =============================================================
 
-WITH source AS (
+
+    {{ config(
+        materialized = 'incremental',
+        incremental_strategy = 'insert_overwrite',
+        partition_by = {
+            'field': 'transaction_ts',
+            'data_type': 'timestamp',
+            'granularity': 'day'
+        },
+        cluster_by = ['account_id']
+    
+
+ ) }}
+
+ WITH source AS ( 
+
+    SELECT * FROM {{source('fraud_detection', 'transactions') }}
+    
+    {% if is_incremental() %}
+
+    WHERE transaction_ts > (SELECT MAX (transaction_ts) FROM {{this}})
+
+    {% endif %}
     -- Pobieramy surowe dane ze źródła
-    SELECT * FROM {{ source('fraud_detection', 'transactions') }}
 ),
+
+
 
 cleaned AS (
     SELECT
@@ -87,7 +110,7 @@ cleaned AS (
                                                 AS _flag_expired_card,
 
         -- Metadane stagingu
-        CURRENT_TIMESTAMP()                     AS _staged_at,
+        CAST('{{ run_started_at }}' AS TIMESTAMP)  AS _staged_at,
 
     FROM source
 ),
